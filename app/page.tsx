@@ -1,69 +1,168 @@
-import Image from "next/image";
+"use client";
+
+import React, { useState } from "react";
+import Header from "@/components/Header";
+import Hero from "@/components/Hero";
+import SplitGateway from "@/components/SplitGateway";
+import MetricsStrip from "@/components/MetricsStrip";
+import MaterialExplorer, { Specimen } from "@/components/MaterialExplorer";
+import ShowroomGrid from "@/components/ShowroomGrid";
+import TradeBanner from "@/components/TradeBanner";
+import Footer from "@/components/Footer";
+import Modals from "@/components/Modals";
+import Toast from "@/components/Toast";
 
 export default function Home() {
+  // Modal States
+  const [inquiryOpen, setInquiryOpen] = useState(false);
+  const [inquiryTopic, setInquiryTopic] = useState("");
+
+  const [showroomModalOpen, setShowroomModalOpen] = useState(false);
+  const [showroomModalType, setShowroomModalType] = useState<"shree-shyam" | "surface-studio" | null>(null);
+
+  const [specimenModalOpen, setSpecimenModalOpen] = useState(false);
+  const [selectedSpecimen, setSelectedSpecimen] = useState<Specimen | null>(null);
+
+  const [bookingModalOpen, setBookingModalOpen] = useState(false);
+  const [bookingShowroom, setBookingShowroom] = useState("Bowbazar Flagship Showroom");
+
+  const [tradeModalOpen, setTradeModalOpen] = useState(false);
+
+  const [enterpriseModalOpen, setEnterpriseModalOpen] = useState(false);
+  const [enterpriseMetricTopic, setEnterpriseMetricTopic] = useState("");
+
+  // Toast State
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
+
+  const showToast = (msg: string) => {
+    setToastMessage(msg);
+    setTimeout(() => {
+      setToastMessage((prev) => (prev === msg ? null : prev));
+    }, 4000);
+  };
+
+  const handleCopyPhone = () => {
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText("+918282038080");
+    }
+    showToast("Phone number +91 82820 38080 copied to clipboard.");
+  };
+
+  const handleScrollToSection = (sectionId: string) => {
+    const el = document.getElementById(sectionId);
+    if (el) {
+      el.scrollIntoView({ behavior: "smooth" });
+    }
+  };
+
+  const handleOpenInquiry = (topic?: string) => {
+    setInquiryTopic(topic || "General Material Consultation");
+    setInquiryOpen(true);
+  };
+
+  const handleOpenShowroomModal = (type: "shree-shyam" | "surface-studio") => {
+    setShowroomModalType(type);
+    setShowroomModalOpen(true);
+  };
+
+  const handleOpenSpecimenModal = (specimen: Specimen) => {
+    setSelectedSpecimen(specimen);
+    setSpecimenModalOpen(true);
+  };
+
+  const handleOpenBookingModal = (showroomName: string) => {
+    setBookingShowroom(showroomName);
+    setBookingModalOpen(true);
+  };
+
+  const handleOpenEnterpriseModal = (metricTopic?: string) => {
+    setEnterpriseMetricTopic(metricTopic || "Enterprise Overview");
+    setEnterpriseModalOpen(true);
+  };
+
+  const handleDownloadCatalog = () => {
+    showToast("Downloading SSPL Hub Architectural Specification Guide (PDF)...");
+  };
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert h-5 w-[100px]"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
+    <div className="min-h-screen flex flex-col bg-[#f9f9f9] text-[#1a1c1c] antialiased selection:bg-black selection:text-white">
+      {/* Header */}
+      <Header
+        onOpenInquiry={handleOpenInquiry}
+        onOpenShowroomModal={handleOpenShowroomModal}
+        onCopyPhone={handleCopyPhone}
+      />
+
+      {/* Main Content */}
+      <main className="flex-1 w-full">
+        {/* Hero Section */}
+        <Hero
+          onScrollToSection={handleScrollToSection}
+          onOpenTradeModal={() => setTradeModalOpen(true)}
         />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the{" "}
-            <code className="rounded bg-black/[.06] px-1.5 py-0.5 font-mono text-[0.9em] dark:bg-white/[.08]">
-              page.tsx
-            </code>{" "}
-            file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert h-[14px] w-4"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={14}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
+
+        {/* Dual Showroom Split Gateway */}
+        <SplitGateway
+          onOpenShowroomModal={handleOpenShowroomModal}
+          onOpenInquiry={handleOpenInquiry}
+        />
+
+        {/* Enterprise Metrics Strip */}
+        <MetricsStrip onOpenEnterpriseModal={handleOpenEnterpriseModal} />
+
+        {/* Material Specimen Explorer */}
+        <MaterialExplorer
+          onOpenSpecimenModal={handleOpenSpecimenModal}
+          onOpenInquiry={handleOpenInquiry}
+        />
+
+        {/* Kolkata Showrooms Experience Centers */}
+        <ShowroomGrid
+          onOpenBookingModal={handleOpenBookingModal}
+          onCopyPhone={handleCopyPhone}
+          onShowToast={showToast}
+        />
+
+        {/* Architect & Trade Partner Fast Access Banner */}
+        <TradeBanner
+          onOpenTradeModal={() => setTradeModalOpen(true)}
+          onDownloadCatalog={handleDownloadCatalog}
+        />
       </main>
+
+      {/* Footer */}
+      <Footer
+        onOpenInquiry={handleOpenInquiry}
+        onOpenShowroomModal={handleOpenShowroomModal}
+        onScrollToSection={handleScrollToSection}
+        onCopyPhone={handleCopyPhone}
+        onShowToast={showToast}
+      />
+
+      {/* All Interactive Modals & Drawers */}
+      <Modals
+        inquiryOpen={inquiryOpen}
+        onCloseInquiry={() => setInquiryOpen(false)}
+        inquiryDefaultTopic={inquiryTopic}
+        showroomModalOpen={showroomModalOpen}
+        showroomModalType={showroomModalType}
+        onCloseShowroomModal={() => setShowroomModalOpen(false)}
+        specimenModalOpen={specimenModalOpen}
+        selectedSpecimen={selectedSpecimen}
+        onCloseSpecimenModal={() => setSpecimenModalOpen(false)}
+        bookingModalOpen={bookingModalOpen}
+        bookingShowroom={bookingShowroom}
+        onCloseBookingModal={() => setBookingModalOpen(false)}
+        tradeModalOpen={tradeModalOpen}
+        onCloseTradeModal={() => setTradeModalOpen(false)}
+        enterpriseModalOpen={enterpriseModalOpen}
+        enterpriseMetricTopic={enterpriseMetricTopic}
+        onCloseEnterpriseModal={() => setEnterpriseModalOpen(false)}
+        onShowToast={showToast}
+      />
+
+      {/* Toast Notifications */}
+      <Toast message={toastMessage} onClose={() => setToastMessage(null)} />
     </div>
   );
 }
